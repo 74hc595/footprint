@@ -83,7 +83,7 @@ def between(a, b, t=0.5):
   return a + (b-a)*t
 
 
-def __mil_to_unit(mil):
+def _mil_to_unit(mil):
   """pcb uses 1/100 mil as its native unit; this function converts mils
   to native units.
 
@@ -199,10 +199,10 @@ class Pad(Shape):
       y2 = self.bottom - thickness/2.
     mask = thickness + self.clearance
     return "Pad[%d %d %d %d %d %d %d \"%s\" \"%s\" %#x]" % (
-        __mil_to_unit(x1+tx), __mil_to_unit(y1+ty),
-        __mil_to_unit(x2+tx), __mil_to_unit(y2+ty),
-        __mil_to_unit(thickness), __mil_to_unit(self.clearance),
-        __mil_to_unit(mask),
+        _mil_to_unit(x1+tx), _mil_to_unit(y1+ty),
+        _mil_to_unit(x2+tx), _mil_to_unit(y2+ty),
+        _mil_to_unit(thickness), _mil_to_unit(self.clearance),
+        _mil_to_unit(mask),
         self.name,
         self.number,
         0 if self.round else 0x100)
@@ -295,10 +295,10 @@ class Pin(Shape):
 
   def pcb_repr(self, tx=0, ty=0):
     return "Pin[%d %d %d %d %d %d \"%s\" \"%s\" %#x]" % (
-        __mil_to_unit(self.x+tx), __mil_to_unit(self.y+ty),
-        __mil_to_unit(self.diameter), __mil_to_unit(self.clearance),
-        __mil_to_unit(self.diameter+self.mask_offset), __mil_to_unit(self.hole),
-        __self.name, self.number,
+        _mil_to_unit(self.x+tx), _mil_to_unit(self.y+ty),
+        _mil_to_unit(self.diameter), _mil_to_unit(self.clearance),
+        _mil_to_unit(self.diameter+self.mask_offset), _mil_to_unit(self.hole),
+        self.name, self.number,
         0x1 | (0 if self.round else 0x100))
 
   @property
@@ -363,9 +363,9 @@ class SilkLine(Shape):
 
   def pcb_repr(self, tx=0, ty=0):
     return "ElementLine[%d %d %d %d %d]" % (
-        __mil_to_unit(self.x1+tx), __mil_to_unit(self.y1+ty),
-        __mil_to_unit(self.x2+tx), __mil_to_unit(self.y2+ty),
-        __mil_to_unit(self.thickness))
+        _mil_to_unit(self.x1+tx), _mil_to_unit(self.y1+ty),
+        _mil_to_unit(self.x2+tx), _mil_to_unit(self.y2+ty),
+        _mil_to_unit(self.thickness))
 
 
 
@@ -465,10 +465,10 @@ class SilkArc(Shape):
 
   def pcb_repr(self, tx, ty):
     return "ElementArc[%d %d %d %d %d %d %d]" % (
-        __mil_to_unit(self.x+tx), __mil_to_unit(self.y+ty),
-        __mil_to_unit(self.x_radius), __mil_to_unit(self.y_radius),
+        _mil_to_unit(self.x+tx), _mil_to_unit(self.y+ty),
+        _mil_to_unit(self.x_radius), _mil_to_unit(self.y_radius),
         self.start_angle, self.delta_angle,
-        __mil_to_unit(self.thickness))
+        _mil_to_unit(self.thickness))
 
 
 
@@ -695,8 +695,8 @@ class Footprint(object):
     """Returns a string representation of the footprint in pcb format."""
     s = "Element[\"\" \"%s\" \"\" \"%s\" %d %d %d %d %d %d \"\"] (\n" % (
         self.description, self.name,
-        __mil_to_unit(self.mark_x), __mil_to_unit(self.mark_y),
-        __mil_to_unit(self.text_x), __mil_to_unit(self.text_y),
+        _mil_to_unit(self.mark_x), _mil_to_unit(self.mark_y),
+        _mil_to_unit(self.text_x), _mil_to_unit(self.text_y),
         self.text_direction, self.text_scale)
     s += "\n".join(s.pcb_repr(-self.mark_x, -self.mark_y) for s in self.shapes)
     s += "\n)\n"
